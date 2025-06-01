@@ -1,7 +1,7 @@
 #VMD2lmp
 ===========================
 
-该文件为分子动力学模拟手册，总共包含三个部分：制作data文件；根据需求确定in.lammps文件；结构后处理。
+LAMMPS 是最广泛使用的分子动力学模拟软件包之一，因其灵活性、易用性和开源利于二次开发而备受青睐。本手册旨在搭建一个LAMMPS经典分子动力学模拟的工作流。作为分子动力学模拟手册，总共包含三个部分：制作data文件；根据需求确定in.lammps文件；结构后处理。
 
 
 ****
@@ -17,26 +17,26 @@
         *  [调整pdb的原子位置](#调整pdb的原子位置)
            *  [Packmol](#Packmol)
            *  [NAMD](#NAMD)
-    * Switch2lmpdata
-        *  lmpdata info   
-        *  xyz2lmp
-        *  Charmm2lmp
-    * 删除线
+    * [Switch2lmpdata](#Switch2lmpdata)
+* [Make_lammps](#Make_lammps)
+    * lammps的in文件
 
+* [Make_trj](#Make_trj)
 ***
 
 # Make_data
-## 如何生成data.lmp文件
-LAMMPS is one of the most widely used molecular dynamics simulation packages due to its flexibility, ease of use, and open-source nature. The data file used in LAMMPS contains two main components: atomic coordinates and potential (force field) information, further concluded by [pdb, psf, top and par]. The first par of manual provides a straightforward introduction to the simplest method for creating a data file from scratch.
 
+## 如何生成data.lmp文件
+方案一：借助Material Stuidio的msi2lmp功能实现转换，具体方法可参考网址https://molakirlee.github.io/2020/12/06/lammps_msi2lmp/。该方法适用力场有限（具体可见msi2lmp文件中frc文件夹中力场信息，以pcff,cvff，oplsaa,compass为主）。
+
+方案二：从底层的力场信息出发，制作LAMMPS_data文件
+LAMMPS 使用的数据文件主要包含两部分核心内容：原子坐标，成键及对应势能信息，可以将data文件拆分成 [pdb、psf、top 和 par]四个部分。
 | Data Components  | Matched Info                              |
 |------------------|------------------------------------------|
 | sys.pdb          | atomic coordinate                         |
 | sys.psf          | charge & mass & top                       |
 | TOP              | topology                                  |
 | PAR              | bond & angle & dihedral & non-bond parameters |
-
-用一张图说明流程为
 
 ## Get_TOP&PAR
 TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包含了成键（键，键角，二面角）方式（top）和参数（par）。首先建议在做了力场参数和DFT精度校对的文章中提取其使用的参数信息，按TOP和PAR文件格式填写。此处需要注意`文章参数中单位是否与格式中单位一致`。
@@ -140,79 +140,11 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
 将得到的pdb文件用VMD以对应生成psf文件打开后，再另存以保证对应原子信息，或者通过python代码替换原sys.pdb的原子坐标。
 
 #####  NAMD
-虽然NAMD和lammps都是分子动力学模拟运行软件，LAMMPS的运行结果和可实现方案比NAMD更为广泛。NAMD主要与MS起类似作用，进行结构的初步系综处理。 NAMD的运行方式是通过pdb,psf和par文件进行运行。
+虽然NAMD和lammps都是分子动力学模拟运行软件，LAMMPS的运行结果和可实现方案比NAMD更为广泛。NAMD主要与MS起类似作用，进行结构的初步系综处理。 NAMD的运行方式是通过pdb,psf和par文件进行运行。具体NAMD软件运行in文件可参考[in.NAMD]文件。
 
-NAMD运行in文件例子
-    
-    structure           sys.psf
-    coordinates         sys.pdb
-    paraTypeCharmm	    on
-    parameters          par_naf.prm
-    if {0} { #固定原子位置，对应pdf文件倒数第二列1.0为固定
-        fixedAtoms on
-        fixedAtomsFile sys.pdb
-        fixedAtomsCol O
-    }
-
-    set La              80
-    set temperature     300
-    temperature         $temperature
-
-    if {1} {
-      cellBasisVector1    $La     0.     0.
-      cellBasisVector2     0.    $La     0.
-      cellBasisVector3     0.     0.    $La
-      cellOrigin           0.     0.     0.
-      PME                 yes
-      PMEGridSizeX        100
-      PMEGridSizeY        100
-      PMEGridSizeZ        100
-    }
-    wrapWater           on
-    wrapAll             on
-
-    exclude             scaled1-4
-    cutoff              10.
-    switching           on
-    switchdist          8.
-    pairlistdist        12.
-
-    timestep            0.5
-
-    if {1} { #NVT操作
-      langevin            on   
-      langevinDamping     5    
-      langevinTemp        $temperature
-      langevinHydrogen    on   
-    }
-
-    if {1} { #NPT操作
-        useGroupPressure      yes
-        useFlexibleCell       no
-
-        langevinPiston        on
-        langevinPistonTarget  100 ;#  in bar -> 1 atm
-        langevinPistonPeriod  100.0
-        langevinPistonDecay   50.0
-        langevinPistonTemp    $temperature
-    }
-    if {0} { #添加电场
-        eFieldOn          yes
-        eField            0.0 0.0 1
-    }
-
-    outputName        md_o
-    dcdfreq           1000
-    outputEnergies    1000
-    outputTiming      1000
-
-    if {1} {
-      minimize        100
-      reinitvels      $temperature
-    }
-
-    run               1000000
-
+##Switch2lmpdata
 最后，将得到的pdb,psf,par,top文件通过charmm2lammps.pl脚本转换成lammps的data文件。如果文件命名为sys.pdb,sys.psf,top_naf.rtf,par_naf.prm执行命令为./charmm2lammps.pl naf sys。
 
 # Make_lammps
+
+# Make_trj
