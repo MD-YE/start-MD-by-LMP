@@ -14,7 +14,7 @@
     * [Get_PDB&PSF](#Get_PDB&PSF)
         *  [生成初始pdb和psf文件](#生成初始pdb和psf文件)
            *  [VMD_TOPO](#VMD_TOPO)
-        *  修改pdb的原子坐标
+        *  [调整pdb的原子位置](#调整pdb的原子位置)
            *  [Packmol](#Packmol)
            *  [NAMD](#NAMD)
     * Switch2lmpdata
@@ -105,7 +105,7 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
 
 得到初始pdb和psf文件信息
 
-### 修改pdb的原子坐标
+### 调整pdb的原子位置
 通过Material Studio/gauss等软件得到体系的最小单元后，需要批量复制原子已得到所需大小的体系。批量复制可以通过Material Studio内置内容得到，后续可以通过xyz2lmp以得到data文件。本手册主要介绍通过Packmol获得合理的体系。同时也简要说明了用NAMD完成这个过程的方式。
 #### Packmol
 ##### 参考解析网址
@@ -119,23 +119,23 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
      output sys.pdb
      add_box_sides 1.2 # 添加边界
 
-  structure solvate.pdb
-    number 8000 # 添加单体数量
-    inside box -60 -60 -60 60 60 60 #盒子大小，应小于际要求大小保证所有原子均位于盒子内部
-  end structure
-  
-  structure chloroform.pdb
-    number 200
-    inside box 0. 0. 0. 40. 40. 20.
-    inside sphere 20. 20. 20. 15. #(2,2,2) nm 1.5 nm半径的圆
-  end structure
-
-  structure IrO2.pdb
-    number 1 # 添加单体数量
-    inside box -60 -60 -60 60 60 60
-    center
-    fixed 0. 0. 0. 0. 0. 0.
-  end structure
+     structure solvate.pdb
+       number 8000 # 添加单体数量
+       inside box -60 -60 -60 60 60 60 #盒子大小，应小于际要求大小保证所有原子均位于盒子内部
+     end structure
+     
+     structure chloroform.pdb
+       number 200
+       inside box 0. 0. 0. 40. 40. 20.
+       inside sphere 20. 20. 20. 15. #(2,2,2) nm 1.5 nm半径的圆
+     end structure
+   
+     structure IrO2.pdb
+       number 1 # 添加单体数量
+       inside box -60 -60 -60 60 60 60
+       center
+       fixed 0. 0. 0. 0. 0. 0.
+     end structure
 
 将得到的pdb文件用VMD以对应生成psf文件打开后，再另存以保证对应原子信息，或者通过python代码替换原sys.pdb的原子坐标。
 
@@ -152,7 +152,7 @@ NAMD运行in文件例子
         fixedAtoms on
         fixedAtomsFile sys.pdb
         fixedAtomsCol O
-   }
+    }
 
     set La              80
     set temperature     300
