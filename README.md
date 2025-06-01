@@ -148,3 +148,27 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
 # Make_lammps
 
 # Make_trj
+## VMD基本使用
+### 基本设置
+
+
+### TCL CONSOLE
+
+
+
+插件 density profile
+
+## VMD脚本
+结构信息
+氢键
+
+水团簇数量及大小
+
+物种覆盖度
+
+
+动力学信息
+MSD 扩散系数
+
+
+
