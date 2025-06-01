@@ -8,16 +8,15 @@
 
 ## 目录
 * [Make_data](#Make_data)
-    * How to make data
-    * Get_TOP&PAR
-        *  Autoff粗获信息
-        *  力场文件进行二次确认       
-    * Get_PDB&PSF
-        *  Packmol  
-        *  NAMD
-    * Combined Mol info
-        *  VMD
-            *  TOPO
+    * [如何生成data.lmp文件](#如何生成data.lmp文件)
+    * [Get_TOP&PAR](#Get_TOP&PAR)
+        *  [Autoff抓取力场信息](#Autoff抓取力场信息)      
+    * [Get_PDB&PSF](#Get_PDB&PSF)
+        *  [生成初始pdb和psf文件](#生成初始pdb和psf文件)
+           *  [VMD_TOPO](#VMD_TOPO)
+        *  修改pdb的原子坐标
+           *  [Packmol](#Packmol)
+           *  [NAMD](#NAMD)
     * Switch2lmpdata
         *  lmpdata info   
         *  xyz2lmp
@@ -27,7 +26,7 @@
 ***
 
 # Make_data
-## Hot to make data
+## 如何生成data.lmp文件
 LAMMPS is one of the most widely used molecular dynamics simulation packages due to its flexibility, ease of use, and open-source nature. The data file used in LAMMPS contains two main components: atomic coordinates and potential (force field) information, further concluded by [pdb, psf, top and par]. The first par of manual provides a straightforward introduction to the simplest method for creating a data file from scratch.
 
 | Data Components  | Matched Info                              |
@@ -40,7 +39,7 @@ LAMMPS is one of the most widely used molecular dynamics simulation packages due
 用一张图说明流程为
 
 ## Get_TOP&PAR
-### Example
+TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包含了成键（键，键角，二面角）方式（top）和参数（par）。首先建议在做了力场参数和DFT精度校对的文章中提取其使用的参数信息，按TOP和PAR文件格式填写。此处需要注意`文章参数中单位是否与格式中单位一致`。
 [TOP format]
 
     MASS      4     HT    1.0080 H
@@ -70,9 +69,10 @@ LAMMPS is one of the most widely used molecular dynamics simulation packages due
     OT     0.000000  -0.152100     1.768200 ! ALLOW   WAT
     HT     0.000000  -0.046000     0.224500 ! ALLOW WAT
 
-TOP和PAR的信息是根据所使用的力场得到的。根据所选体系确定对应力场信息，常见力场有CHARMM，OPLS，Dreiding，UFF等。通过下载该力场的文件以抓取对应信息。该过程可通过网站CHARMM-GUI或者Autoff实现。介于Charmm-GUI过程较繁琐，下面贴出Autoff的网站和对应使用方法。
 
-### AutoFF
+若无法找到对应信息，可以根据所选体系确定合适力场，常见力场有CHARMM，OPLS，Dreiding，UFF等。通过下载该力场的文件以抓取对应信息。该过程可通过网站CHARMM-GUI或者Autoff实现。介于Charmm-GUI过程较繁琐，下面贴出Autoff的网站和对应使用方法。
+
+### Autoff抓取力场信息
 
     网站链接 https://autoff.readthedocs.io/en/latest/Introduction.html
 
@@ -89,7 +89,7 @@ TOP和PAR的信息是根据所使用的力场得到的。根据所选体系确�
 ## Get_PDB&PSF
 ### 得到原始pdb和psf文件
 通过VMD的TOPO功能，利用TOP功能把最小单元的pdb文件合并成整个体系的pdb文件。
-#### VMD
+#### VMD_TOPO
 将已有最小单元的pdb文件和生成的TOP和PAR文件信息对应后。在VMD-Extensions-TK console中执行以下命令。
     topology top_naf.rtf
     segment L1 {pdb L1.pdb; auto angles dihedrals}  #自动生产键角二面角信息，与TOP和PAR信息需要对应
@@ -108,7 +108,6 @@ TOP和PAR的信息是根据所使用的力场得到的。根据所选体系确�
 #### Packmol
 ##### 参考解析网址
 官网网址 https://m3g.github.io/packmol/
-
 案例网址 http://sobereva.com/473
 
 ##### inp文件格式
