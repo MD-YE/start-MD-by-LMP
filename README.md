@@ -91,16 +91,18 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
 通过VMD的TOPO功能，利用TOP功能把最小单元的pdb文件合并成整个体系的pdb文件。
 #### VMD_TOPO
 将已有最小单元的pdb文件和生成的TOP和PAR文件信息对应后。在VMD-Extensions-TK console中执行以下命令。
-    topology top_naf.rtf
-    segment L1 {pdb L1.pdb; auto angles dihedrals}  #自动生产键角二面角信息，与TOP和PAR信息需要对应
-    coordpdb L1.pdb L1 #添加segname信息L1
-    segment OH3 {pdb OH3.pdb}
-    coordpdb OH3.pdb OH3
-    segment WAT {pdb solvate.pdb}
-    coordpdb solvate.pdb WAT
-    guesscoord
-    writepdb sys.pdb
-    writepsf sys.psf
+
+      topology top_naf.rtf
+      segment L1 {pdb L1.pdb; auto angles dihedrals}  #自动生产键角二面角信息，与TOP和PAR信息需要对应
+      coordpdb L1.pdb L1 #添加segname信息L1
+      segment OH3 {pdb OH3.pdb}
+      coordpdb OH3.pdb OH3
+      segment WAT {pdb solvate.pdb}
+      coordpdb solvate.pdb WAT
+      guesscoord
+      writepdb sys.pdb
+      writepsf sys.psf
+
 得到初始pdb和psf文件信息
 
 ### 修改pdb的原子坐标
@@ -112,10 +114,10 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
 
 ##### inp文件格式
 
-  tolerance 2.0 # 最近距离
-  filetype pdb
-  output sys.pdb
-  add_box_sides 1.2 # 添加边界
+     tolerance 2.0 # 最近距离
+     filetype pdb
+     output sys.pdb
+     add_box_sides 1.2 # 添加边界
 
   structure solvate.pdb
     number 8000 # 添加单体数量
@@ -141,6 +143,7 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
 虽然NAMD和lammps都是分子动力学模拟运行软件，LAMMPS的运行结果和可实现方案比NAMD更为广泛。NAMD主要与MS起类似作用，进行结构的初步系综处理。 NAMD的运行方式是通过pdb,psf和par文件进行运行。
 
 NAMD运行in文件例子
+    
     structure           sys.psf
     coordinates         sys.pdb
     paraTypeCharmm	    on
@@ -149,7 +152,7 @@ NAMD运行in文件例子
         fixedAtoms on
         fixedAtomsFile sys.pdb
         fixedAtomsCol O
-    }
+   }
 
     set La              80
     set temperature     300
