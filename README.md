@@ -38,6 +38,8 @@ LAMMPS 使用的数据文件主要包含两部分核心内容：原子坐标，�
 | TOP              | topology                                  |
 | PAR              | bond & angle & dihedral & non-bond parameters |
 
+参考网址 http://bbs.keinsci.com/thread-4753-1-1.html （VMD_TOPO）
+
 ## Get_TOP&PAR
 TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包含了成键（键，键角，二面角）方式（top）和参数（par）。首先建议在做了力场参数和DFT精度校对的文章中提取其使用的参数信息，按TOP和PAR文件格式填写。此处需要注意`文章参数中单位是否与格式中单位一致`。
 [TOP format]
@@ -142,10 +144,29 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
 #####  NAMD
 虽然NAMD和lammps都是分子动力学模拟运行软件，LAMMPS的运行结果和可实现方案比NAMD更为广泛。NAMD主要与MS起类似作用，进行结构的初步系综处理。 NAMD的运行方式是通过pdb,psf和par文件进行运行。具体NAMD软件运行in文件可参考[in.NAMD]文件。
 
+   参考网址 https://www.cnblogs.com/jszd/p/11178789.html
+
 ##Switch2lmpdata
 最后，将得到的pdb,psf,par,top文件通过charmm2lammps.pl脚本转换成lammps的data文件。如果文件命名为sys.pdb,sys.psf,top_naf.rtf,par_naf.prm执行命令为./charmm2lammps.pl naf sys。
 
 # Make_lammps
+经典分子动力学 
+反应力场
+
+替换原子名词
+   sed -e 's/^1 /HT  /g' -e 's/^2 /CA /g' -e 's/^3 /OT  /g' -e 's/^4 /CF  /g' -e 's/^5 /FC  /g' -e 's/^6 /OC  /g'  -e 's/^7 /OS  /g' -e 's/^8 /SO  /g' -e 's/^9 /OI  /g' -e 's/^10 /HI  /g'  dump.xyz > nafion.xyz
+
+数据后处理脚本   https://github.com/dadaoqiuzhi/RMD_Digging.git
+
+机器学习力场
+
+LMP计算数据后处理
+计算MSD
+fix 1 all nvt temp 300 300 1
+compute msd all msd com yes
+fix 2 all vector 10 c_msd[4]
+fix 3 all ave/time 10 1000 10000 c_msd[*] file MSD.out mode vector
+thermo_style 		custom step temp c_msd[4]
 
 # Make_trj
 ## VMD基本使用
@@ -159,10 +180,16 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
 插件 density profile
 
 ## VMD脚本
+VMD自带脚本 https://github.com/myonkunas/tcl_scripts
+liquidlib [https://github.com/dadaoqiuzhi/RMD_Digging.git](https://data.mendeley.com/datasets/tyggwp7656/1)
+RDAnalyzer https://github.com/RDAnalyzer/release/releases
+
 结构信息
 氢键
+VND脚本计算 https://www.cnblogs.com/sysu/p/17006091.html
 
-水团簇数量及大小
+水团簇数量及大小 
+zeo++ http://zeoplusplus.org/
 
 物种覆盖度
 
