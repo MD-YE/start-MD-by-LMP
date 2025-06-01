@@ -52,13 +52,14 @@
 
 # Make_data
 ## Hot to make data
-    LAMMPS is one of the most widely used molecular dynamics simulation packages due to its flexibility, ease of use, and open-source nature. The data file used in LAMMPS contains two main components: atomic coordinates and potential (force field) information, further concluded by [pdb, psf, top and par]. The first par of manual provides a straightforward introduction to the simplest method for creating a data file from scratch.
+LAMMPS is one of the most widely used molecular dynamics simulation packages due to its flexibility, ease of use, and open-source nature. The data file used in LAMMPS contains two main components: atomic coordinates and potential (force field) information, further concluded by [pdb, psf, top and par]. The first par of manual provides a straightforward introduction to the simplest method for creating a data file from scratch.
 <div align="center">
-|data components|matched info| 
-|sys.pdb|atomic coordinate|
-|sys.psf|charge & mass & top|
-|TOP|topology|
-|PAR|bond & angle & dihedral & non-bond parameters|
+| Data Components  | Matched Info                              |
+|------------------|------------------------------------------|
+| sys.pdb          | atomic coordinate                         |
+| sys.psf          | charge & mass & top                       |
+| TOP              | topology                                  |
+| PAR              | bond & angle & dihedral & non-bond parameters |
 </div>
 
 ## Get_TOP&PAR
@@ -130,6 +131,7 @@ TOP和PAR的信息是根据所使用的力场得到的。根据所选体系确�
 #### Packmol
 ##### 参考解析网址
 官网网址 https://m3g.github.io/packmol/
+
 案例网址 http://sobereva.com/473
 
 ##### inp文件格式
