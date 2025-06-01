@@ -1,0 +1,56 @@
+# Created by charmm2lammps v1.9.1 on Mon Dec 18 14:04:06 CST 2023
+# Command: charmm2lammps.pl qappt sys
+
+
+#--------------basic-------------
+units                real
+atom_style           full
+boundary             p p f
+neighbor        2 bin
+neigh_modify    delay 0 every 1
+
+# CHARMM
+pair_style           lj/charmm/coul/long 8 12
+pair_modify          mix geometric
+bond_style           harmonic
+angle_style          charmm 
+dihedral_style       charmm
+improper_style       harmonic
+kspace_style         pppm 1e-6
+kspace_modify        slab 3.0
+read_data	     sys.data
+pair_coeff 	     7 10 0.03 2.0
+variable	     q atom q
+
+timestep        1
+region lower_block block INF INF INF INF -53 -50
+region upper_block block INF INF INF INF  62 64
+group lower_atoms region lower_block
+group upper_atoms region upper_block
+min_style cg
+minimize 1.0e-15 1.0e-15 10000 10000
+
+
+velocity        all create 330 12345678 dist gaussian
+velocity        lower_atoms set 0.0 0.0 0.0
+velocity        upper_atoms set 0.0 0.0 0.0
+
+group moving_atoms subtract all lower_atoms upper_atoms
+
+fix 	        1 lower_atoms setforce 0.0 0.0 0.0
+fix             2 upper_atoms setforce 0.0 0.0 0.0
+fix		3 lower_atoms conp 100 upper_atoms 1.979 2 log_conp
+fix             4 moving_atoms nve
+fix             5 moving_atoms langevin 330 330 100 48279
+#fix   		4 all nvt temp 330.0 330.0 10.0
+#fix		3 all npt temp 300.0 300.0 0.1 iso 1.0 1.0 0.1
+
+
+compute qleft lower_atoms reduce sum v_q
+compute qright upper_atoms reduce sum v_q
+
+thermo          5000
+thermo_style custom step temp pe etotal press vol c_qleft c_qright
+dump            1 all dcd 5000 dump_2V.dcd
+dump            2 all custom 5000 dump_2V.lammpstrj id type x y z q
+run             12000000
