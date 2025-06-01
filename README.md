@@ -12,7 +12,7 @@
     * Get_TOP&PAR
         *  Autoff粗获信息
         *  力场文件进行二次确认       
-    * Get_PDB
+    * Get_PDB&PSF
         *  Packmol  
         *  NAMD
     * Combined Mol info
@@ -23,44 +23,21 @@
         *  xyz2lmp
         *  Charmm2lmp
     * 删除线
-* [图片](#图片)
-    * 来源于网络的图片
-    * GitHub仓库中的图片
-* [链接](#链接)
-    * 文字超链接
-        *  链接外部URL
-        *  链接本仓库里的URL
-    *  锚点
-    * [图片链接](#图片链接)
-* [列表](#列表)
-    * 无序列表
-    * 有序列表
-    * 复选框列表
-* [块引用](#块引用)
-* [代码高亮](#代码高亮)
-* [表格](#表格)
-* [表情](#表情)
-* [diff语法](#diff语法)
-* [常用HTML语法](#常用HTML语法)
-    * [折叠](#折叠)
-    * [居中](#居中)
-* [其他](#其他)
-    * [徽章](#徽章)
-    * [star历史](#star历史)
 
 ***
 
 # Make_data
 ## Hot to make data
 LAMMPS is one of the most widely used molecular dynamics simulation packages due to its flexibility, ease of use, and open-source nature. The data file used in LAMMPS contains two main components: atomic coordinates and potential (force field) information, further concluded by [pdb, psf, top and par]. The first par of manual provides a straightforward introduction to the simplest method for creating a data file from scratch.
-<div align="center">
+
 | Data Components  | Matched Info                              |
 |------------------|------------------------------------------|
 | sys.pdb          | atomic coordinate                         |
 | sys.psf          | charge & mass & top                       |
 | TOP              | topology                                  |
 | PAR              | bond & angle & dihedral & non-bond parameters |
-</div>
+
+用一张图说明流程为
 
 ## Get_TOP&PAR
 ### Example
@@ -101,7 +78,7 @@ TOP和PAR的信息是根据所使用的力场得到的。根据所选体系确�
 
 需要确认的是体系力场和体系最小单元的pdb文件（网站处理大量原子困难，现在目的是确认TOP和PAR信息，pdb和psf信息可通过packmol和vmd的topo方法得到）
 上传pdb文件至AutoFF中，如存在水分子确认所需要的水分子模型。
-![alt text](image.png)
+
 最小单元原子数较少时可选择更精确的电荷计算方法，如Qeq。此时可以选择计算软件，选择CHARMM方式，下载得到prm和rtf（对应top）文件。
 
 >注考虑到为软件判定的准确性，对于聚合物有机体系而言，直接生成的lammps文件不一定准确以及不利于计算后处理，本方案通过将data分类成pdb,psf,top,prm文件以便于灵活地调整。
