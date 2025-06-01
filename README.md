@@ -27,7 +27,8 @@ LAMMPS 是最广泛使用的分子动力学模拟软件包之一，因其灵活�
 # Make_data
 
 ## 如何生成data.lmp文件
-方案一：借助Material Stuidio的msi2lmp功能实现转换，具体方法可参考网址https://molakirlee.github.io/2020/12/06/lammps_msi2lmp/。该方法适用力场有限（具体可见msi2lmp文件中frc文件夹中力场信息，以pcff,cvff，oplsaa,compass为主）。
+方案一：借助Material Stuidio的msi2lmp功能实现转换，具体方法可参考网址https://molakirlee.github.io/2020/12/06/lammps_msi2lmp/。
+该方法适用力场有限（具体可见msi2lmp文件中frc文件夹中力场信息，以pcff,cvff，oplsaa,compass为主）。
 
 方案二：从底层的力场信息出发，制作LAMMPS_data文件
 LAMMPS 使用的数据文件主要包含两部分核心内容：原子坐标，成键及对应势能信息，可以将data文件拆分成 [pdb、psf、top 和 par]四个部分。
