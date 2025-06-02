@@ -171,32 +171,47 @@ fix 3 all ave/time 10 1000 10000 c_msd[*] file MSD.out mode vector
 thermo_style 		custom step temp c_msd[4]
 
 # Make_trj
-## VMD基本使用
-### 基本设置
+## 统计分类
+### VMD基本使用
+基本设置
 
 
-### TCL CONSOLE
+TCL CONSOLE
 
 
 
-插件 density profile
+VMD插件 density profile
 
-## VMD脚本
+VMD脚本
 VMD自带脚本 https://github.com/myonkunas/tcl_scripts
+
+
+### MDAnalysis
+
+### 其他脚本
+
 liquidlib [https://github.com/dadaoqiuzhi/RMD_Digging.git](https://data.mendeley.com/datasets/tyggwp7656/1)
 RDAnalyzer https://github.com/RDAnalyzer/release/releases
 
-结构信息
+## 统计信息分类
+### 结构信息
 氢键
 VND脚本计算 https://www.cnblogs.com/sysu/p/17006091.html
 
 水团簇数量及大小 
 zeo++ http://zeoplusplus.org/
+软件安装 https://github.com/lsmo-epfl/zeopp-lsmo
+软件使用指南 https://mp.weixin.qq.com/s/8BrJa62YBIkJim36l5owgA
+去除水分子，探测水分子通道大小
+![image](https://github.com/user-attachments/assets/bc3b496c-560e-40b3-8f74-f5eb53142ec3)
+文献 J.Phys. Chem. B 2018, 122, 22, 6107–6119
+
+
 
 物种覆盖度
 
 
-动力学信息
+### 动力学信息
 MSD 扩散系数
 
 
