@@ -40,6 +40,7 @@ LAMMPS 使用的数据文件主要包含两部分核心内容：原子坐标，�
 | PAR              | bond & angle & dihedral & non-bond parameters |
 
 参考网址 http://bbs.keinsci.com/thread-4753-1-1.html （VMD_TOPO）
+Gromacs软件可以通过sobtop实现data文件的制作。
 
 ## Get_TOP&PAR
 TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包含了成键（键，键角，二面角）方式（top）和参数（par）。首先建议在做了力场参数和DFT精度校对的文章中提取其使用的参数信息，按TOP和PAR文件格式填写。此处需要注意`文章参数中单位是否与格式中单位一致`。
