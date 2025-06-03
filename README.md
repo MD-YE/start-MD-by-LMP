@@ -191,6 +191,7 @@ VMD自带脚本 https://github.com/myonkunas/tcl_scripts
 ### 其他脚本
 
 liquidlib [https://github.com/dadaoqiuzhi/RMD_Digging.git](https://data.mendeley.com/datasets/tyggwp7656/1)
+可得结果 中子散射长度、径向分布函数、结构因子、键定向序参数、平均平方位移、非高斯参数、四点关联函数、速度自相关函数、自 van Hove 关联函数、集体 van Hove 关联函数、自中间散射函数、集体中间散射函数。
 RDAnalyzer https://github.com/RDAnalyzer/release/releases
 
 ## 统计信息分类
@@ -200,12 +201,12 @@ VND脚本计算 https://www.cnblogs.com/sysu/p/17006091.html
 
 水团簇数量及大小 
 zeo++ http://zeoplusplus.org/
+可得结果 孔径大小，表面积，孔径分布
 软件安装 https://github.com/lsmo-epfl/zeopp-lsmo
 软件使用指南 https://mp.weixin.qq.com/s/8BrJa62YBIkJim36l5owgA
 去除水分子，探测水分子通道大小
 ![image](https://github.com/user-attachments/assets/bc3b496c-560e-40b3-8f74-f5eb53142ec3)
 文献 J.Phys. Chem. B 2018, 122, 22, 6107–6119
-
 
 
 物种覆盖度
