@@ -148,8 +148,12 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
 
    参考网址 https://www.cnblogs.com/jszd/p/11178789.html
 
-##Switch2lmpdata
+## Switch2lmpdata
 最后，将得到的pdb,psf,par,top文件通过charmm2lammps.pl脚本转换成lammps的data文件。如果文件命名为sys.pdb,sys.psf,top_naf.rtf,par_naf.prm执行命令为./charmm2lammps.pl naf sys。
+
+
+
+
 
 # Make_lammps
 经典分子动力学 
