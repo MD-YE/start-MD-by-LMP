@@ -94,7 +94,7 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
 ### 得到原始pdb和psf文件
 通过VMD的TOPO功能，利用TOP功能把最小单元的pdb文件合并成整个体系的pdb文件。
 #### VMD_TOPO
-将已有最小单元的pdb文件和生成的TOP和PAR文件信息对应后。在VMD-Extensions-TK console中执行以下命令。
+将已有最小单元的pdb文件和生成的TOP和PAR文件信息对应后。可进行pdb文件的复制以扩展体系，调整segment的数量以实现不同原子数大小体系的构建，通过在VMD-Extensions-TK console中执行以下命令生成sys.pdb和sys.psf文件。
 
       topology top_naf.rtf
       segment L1 {pdb L1.pdb; auto angles dihedrals}  #自动生产键角二面角信息，与TOP和PAR信息需要对应
@@ -107,10 +107,9 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
       writepdb sys.pdb
       writepsf sys.psf
 
-得到初始pdb和psf文件信息
 
-### 调整pdb的原子位置
-通过Material Studio/gauss等软件得到体系的最小单元后，需要批量复制原子已得到所需大小的体系。批量复制可以通过Material Studio内置内容得到，后续可以通过xyz2lmp以得到data文件。本手册主要介绍通过Packmol获得合理的体系。同时也简要说明了用NAMD完成这个过程的方式。
+### 替换pdb中原子位置
+以上生成的pdb文件中可能存在原子重叠等问题导致无法直接跑MD发生报错，为了修改pdb中的原子位置，可以通过Packmol获得合理的体系。
 #### Packmol
 ##### 参考解析网址
 官网网址 https://m3g.github.io/packmol/
@@ -144,9 +143,9 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
 将得到的pdb文件用VMD以对应生成psf文件打开后，再另存以保证对应原子信息，或者通过python代码替换原sys.pdb的原子坐标。
 
 #####  NAMD
-虽然NAMD和lammps都是分子动力学模拟运行软件，LAMMPS的运行结果和可实现方案比NAMD更为广泛。NAMD主要与MS起类似作用，进行结构的初步系综处理。 NAMD的运行方式是通过pdb,psf和par文件进行运行。具体NAMD软件运行in文件可参考[in.NAMD]文件。
+虽然NAMD和lammps都是分子动力学模拟运行软件，LAMMPS的运行结果和可实现方案比NAMD更为广泛。NAMD较不容易发生报错且可以主动修改盒子大小，因此可以进行结构的初步系综处理。 NAMD的运行方式是通过pdb,psf和par文件进行运行。具体NAMD软件运行in文件可参考[in.NAMD]文件。另外对于特定力场（pcff之类的),Material Studio软件通过forcite分子动力学跑到体系平衡，根据内置力场文件进行msi2lmp也可以生成MD的data文件。
 
-   参考网址 https://www.cnblogs.com/jszd/p/11178789.html
+   NAMD参考网址 https://www.cnblogs.com/jszd/p/11178789.html
 
 ## Switch2lmpdata
 最后，将得到的pdb,psf,par,top文件通过charmm2lammps.pl脚本转换成lammps的data文件。如果文件命名为sys.pdb,sys.psf,top_naf.rtf,par_naf.prm执行命令为./charmm2lammps.pl naf sys。
