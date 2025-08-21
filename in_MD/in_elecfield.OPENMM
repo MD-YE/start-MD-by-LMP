@@ -1,0 +1,60 @@
+from sys import stdout
+import openmm
+from openmm.app import PDBFile, StateDataReporter, DCDReporter, Simulation
+import openmm.unit as u
+from openmmml import MLPotential
+from NNPOps.neighbors import getNeighborPairs
+from openmm import CustomExternalForce
+
+# Load toluene structure
+pdb = PDBFile("merged.pdb")
+
+# Create a System with NequIP MLP
+# Need to specify the unit conversion factors from the NequIP model units to OpenMM units.
+A_to_nm = 0.1
+kcal_to_kJ_per_mol = 4.184
+eV_to_kJ_per_mol = 96.485297
+
+potential = MLPotential(
+    "nequip",
+    modelPath="LiOHmtd.pth",
+    lengthScale=A_to_nm,
+    energyScale=eV_to_kJ_per_mol,
+)
+
+system = potential.createSystem(pdb.topology)
+
+# Electric field external force input
+Ez = 1.0  # kJ/(mol*nm*e)
+eforce = CustomExternalForce("-q*Ez*z") 
+eforce.addPerParticleParameter("q")     
+eforce.addGlobalParameter("Ez", Ez)    
+
+# set charge particle 1.0
+for i in range(system.getNumParticles()):
+    eforce.addParticle(i, [1.0])
+
+# charge from ForceField or CharmmPsfFile
+# https://github.com/openmm/openmm/issues/3066
+# nonbonded = [f for f in system.getForces() if isinstance(f, NonbondedForce)][0]
+# for i in range(system.getNumParticles()):
+#   charge, sigma, epsilon = nonbonded.getParticleParameters(i)
+    # You have the charge for particle i, so add it to the CustomExternalForce.
+#   force.addParticle(i, [charge])
+
+
+system.addForce(eforce)
+
+# Set Output
+integrator = openmm.LangevinIntegrator(400*u.kelvin, 1.0/u.picoseconds, 1*u.femtosecond)
+simulation = Simulation(pdb.topology, system, integrator)
+simulation.context.setPositions(pdb.positions)
+simulation.reporters.append(DCDReporter("test.dcd", 100, enforcePeriodicBox=True))
+simulation.reporters.append(StateDataReporter(stdout, 100, step=True, potentialEnergy=True, temperature=True, speed=True))
+
+# Set the velocities 
+simulation.context.setVelocitiesToTemperature(400*u.kelvin)
+simulation.step(1000000)
+~                                                                                                                                                                                      
+~                                                                                                                                                                                      
+~                                                    
