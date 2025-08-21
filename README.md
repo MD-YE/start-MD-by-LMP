@@ -157,6 +157,15 @@ TOP和PAR的信息是根据所使用的力场得到的。力场信息主要包�
 # Make_lammps
 在in_MD文件夹中，持续更新用经典分子动力学力场，反应力场以及机器学习力场的使用实例。进行MD计算软件包含LAMMPS(LMP),OPENMM,ase,NAMD。
 
+电场原理
+
+MtD
+VASP
+LAMMPS
+CP2K
+
+PIMD
+i-pi
 
 
 # Make_trj
@@ -188,11 +197,15 @@ VMD自带脚本 https://github.com/myonkunas/tcl_scripts
 ## 编程库
 
 ### MDAnalysis
+https://userguide.mdanalysis.org/stable/index.html
+MDAnalysis 是一个 Python 库，用于读取和分析分子动力学（MD）轨迹及拓扑文件，支持多种格式如 PDB、XYZ、DCD、LAMMPSDUMP 等。它可以按原子类型、分子或残基选择原子，计算距离、角度、二面角、配位数、RDF 等几何特征，并能分析均方位移（MSD）、速度自相关、氢键数量及寿命等动力学性质。MDAnalysis 还支持质心、旋转和平移分析、多帧统计、周期性边界处理，并能将结果输出为多种格式以便可视化和后续处理，非常适合大规模轨迹分析和定量研究。
+
 
 ### liquidlib
 [https://github.com/dadaoqiuzhi/RMD_Digging.git](https://data.mendeley.com/datasets/tyggwp7656/1)
 可得结果 中子散射长度、径向分布函数、结构因子、键定向序参数、平均平方位移、非高斯参数、四点关联函数、速度自相关函数、自 van Hove 关联函数、集体 van Hove 关联函数、自中间散射函数、集体中间散射函数。
 RDAnalyzer https://github.com/RDAnalyzer/release/releases
+
 
 ### zeo++ 
 http://zeoplusplus.org/
@@ -202,6 +215,58 @@ http://zeoplusplus.org/
 去除水分子，探测水分子通道大小
 ![image](https://github.com/user-attachments/assets/bc3b496c-560e-40b3-8f74-f5eb53142ec3)
 文献 J.Phys. Chem. B 2018, 122, 22, 6107–6119
+
+### reax_tools
+https://github.com/tgraphite/reax_tools
+画出反应网络
+
+### MDPlot
+https://github.com/MDplot/MDplot
+Gromacs蛋白方向，包含聚类，氢键分析，蛋白RMSE分析等功能。
+
+## python案例
+### RDF计算
+RDF_ensemble.py：集成分析多条轨迹的RDF结果，统计其原子配位数以及g(r)绘图。
+配位数直接计算方法参考
+def count_cn(atoms1, atoms2, cutoff_hi, cutoff_lo=None, cell=None):
+    """count the coordination number(CN) for atoms1 (center atoms), where atoms2 are coordinate atom. This function will calculate CN within range cutoff_lo < d < cutoff_lo, where d is the distance between atoms1 and atoms2. Minimum image convention is applied if cell is not None """
+    Args:
+        atoms1 (numpy.ndarray): Array with shape (N, 3), where N is the number of center atoms. 'atoms1' are the position of center atoms. 
+        atoms2 (numpy.ndarray): Array with shape (M, 3), where M is the number of coordination atoms. 'atoms2' are the positions of coordination atoms.
+        cutoff_hi (float): Max cutoff for calculating coordination number. 
+        cutoff_lo (float or None, optional): Min cutoff for calculating coordination number. This function will calculate CN within range cutoff_lo < d < cutoff_lo, where d is the distance between atoms1 and atoms2. Defaults to None.
+        cell (numpy.ndarray, optional): Array with shape (6,), Array([a, b, c, alpha, beta, gamma]). Simulation cell parameters. If it's not None, the CN calculation will use minimum image convention. Defaults to None.
+    Returns:
+        results: Array with shape (N,), CN of each atoms atoms1
+    """
+    pairs, _ = capped_distance(reference=atoms1,
+                               configuration=atoms2,
+                               max_cutoff=cutoff_hi,
+                               min_cutoff=cutoff_lo,
+                               box=cell)
+    _minlength = atoms1.shape[0]
+    results = np.bincount(pairs[:, 0], minlength=_minlength)
+    return results
+    
+### 均方位移MSD
+具体思路参考[https://zhuanlan.zhihu.com/p/31392262515#:~:text=%E2%80%9C%20%E7%BB%9F%E8%AE%A1%E5%8A%9B%E5%AD%A6%E4%B8%AD%EF%BC%8C%20%E5%9D%87%E6%96%B9%E4%BD%8D%E7%A7%BB%20%28mean%20square%20displacement%2C%20MSD%29%20%E6%98%AF%E7%B2%92%E5%AD%90%E4%BD%8D%E7%BD%AE%E7%9B%B8%E5%AF%B9%E4%BA%8E%E5%8F%82%E8%80%83%E4%BD%8D%E7%BD%AE%E9%9A%8F%E6%97%B6%E9%97%B4%E5%8F%98%E5%8C%96%E7%9A%84%E5%81%8F%E5%B7%AE%E7%9A%84%E5%BA%A6%E9%87%8F%E3%80%82,%E5%B9%B6%E8%A1%8C%E7%89%88%E6%9C%AC%E3%80%81%20%E5%BF%AB%E9%80%9F%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2%20%E7%89%88%E6%9C%AC%E3%80%82%20MSD%E6%98%AF%20%E5%88%86%E5%AD%90%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%A8%A1%E6%8B%9F%20%E4%B8%AD%E7%9A%84%E5%85%B3%E9%94%AE%E5%B7%A5%E5%85%B7%EF%BC%8C%E7%94%A8%E4%BA%8E%E7%A0%94%E7%A9%B6%E7%B2%92%E5%AD%90%E6%89%A9%E6%95%A3%E3%80%81%20%E7%9B%B8%E5%8F%98%20%E3%80%81%E7%B3%BB%E7%BB%9F%E5%B9%B3%E8%A1%A1%E5%8F%8A%E6%9D%90%E6%96%99%E6%80%A7%E8%83%BD%E7%AD%89%E3%80%82](https://zhuanlan.zhihu.com/p/31392262515#:~:text=%E2%80%9C%20%E7%BB%9F%E8%AE%A1%E5%8A%9B%E5%AD%A6%E4%B8%AD%EF%BC%8C%20%E5%9D%87%E6%96%B9%E4%BD%8D%E7%A7%BB%20%28mean%20square%20displacement%2C%20MSD%29%20%E6%98%AF%E7%B2%92%E5%AD%90%E4%BD%8D%E7%BD%AE%E7%9B%B8%E5%AF%B9%E4%BA%8E%E5%8F%82%E8%80%83%E4%BD%8D%E7%BD%AE%E9%9A%8F%E6%97%B6%E9%97%B4%E5%8F%98%E5%8C%96%E7%9A%84%E5%81%8F%E5%B7%AE%E7%9A%84%E5%BA%A6%E9%87%8F%E3%80%82,%E5%B9%B6%E8%A1%8C%E7%89%88%E6%9C%AC%E3%80%81%20%E5%BF%AB%E9%80%9F%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2%20%E7%89%88%E6%9C%AC%E3%80%82%20MSD%E6%98%AF%20%E5%88%86%E5%AD%90%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%A8%A1%E6%8B%9F%20%E4%B8%AD%E7%9A%84%E5%85%B3%E9%94%AE%E5%B7%A5%E5%85%B7%EF%BC%8C%E7%94%A8%E4%BA%8E%E7%A0%94%E7%A9%B6%E7%B2%92%E5%AD%90%E6%89%A9%E6%95%A3%E3%80%81%20%E7%9B%B8%E5%8F%98%20%E3%80%81%E7%B3%BB%E7%BB%9F%E5%B9%B3%E8%A1%A1%E5%8F%8A%E6%9D%90%E6%96%99%E6%80%A7%E8%83%BD%E7%AD%89%E3%80%82)
+MSD_C.py：显式计算粒子位移，MSD_Cz.py对应z轴方向的MSD。
+MSD_E.py：MDAnalysis内置的EinsteinMSD，利用粒子位移平方平均随时间增长的线性规律计算，MSD_Cz.py对应z轴方向的MSD。
+
+### 氢键分析
+hba = HBA(
+    universe=u,
+    donors_sel="type 2",        # 供体 O
+    hydrogens_sel="type 1",     # 氢
+    acceptors_sel="type 2",     # 受体 O
+    d_h_cutoff=1.2,             # D-H 最大距离
+    d_a_cutoff=3.2,             # D-A 最大距离
+    d_h_a_angle_cutoff=120      # D-H-A 角度阈值
+)
+
+### 反应网络
+
+### 电场位移距离drift length计算
 
 
 物种覆盖度
