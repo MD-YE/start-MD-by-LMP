@@ -1,0 +1,31 @@
+variable DV equal 0
+#--------------basic-------------
+units           real
+atom_style  charge
+
+#--------------read--------------
+read_data       **nafion9.data**
+#read_restart restart1.equil
+#include "group_OH"
+
+#kspace_style    pppm 1e-6
+pair_style  reax/c lmp_control
+pair_coeff	* * ffield_nafion C F H O S
+
+timestep        0.1
+
+fix     1 all qeq/reax 1 0.0 10.0 1e-6 param.qeq
+fix	2 all reax/c/bonds **500** nafion9.bonds.out.gz
+
+neighbor                    2.5 bin
+neigh_modify             every 10 delay 0 check no
+#minimize 0.0 0.0 50 200
+
+fix     3 all nvt temp 300.0 300.0 10.0
+#fix		3 all npt temp 300.0 300.0 10  iso 1.0 1.0 100
+velocity        all create 300 12345678 dist uniform
+
+thermo          1000
+thermo_style custom step temp pe etotal press vol
+dump 		1 all custom **500** dump.lammpstrj id type q x y z
+run             500000

@@ -1,0 +1,68 @@
+    structure           sys.psf
+    coordinates         sys.pdb
+    paraTypeCharmm	    on
+    parameters          par_naf.prm
+    if {0} { #固定原子位置，对应pdf文件倒数第二列1.0为固定
+        fixedAtoms on
+        fixedAtomsFile sys.pdb
+        fixedAtomsCol O
+    }
+
+    set La              80
+    set temperature     300
+    temperature         $temperature
+
+    if {1} {
+      cellBasisVector1    $La     0.     0.
+      cellBasisVector2     0.    $La     0.
+      cellBasisVector3     0.     0.    $La
+      cellOrigin           0.     0.     0.
+      PME                 yes
+      PMEGridSizeX        100
+      PMEGridSizeY        100
+      PMEGridSizeZ        100
+    }
+    wrapWater           on
+    wrapAll             on
+
+    exclude             scaled1-4
+    cutoff              10.
+    switching           on
+    switchdist          8.
+    pairlistdist        12.
+
+    timestep            0.5
+
+    if {1} { #NVT操作
+      langevin            on   
+      langevinDamping     5    
+      langevinTemp        $temperature
+      langevinHydrogen    on   
+    }
+
+    if {1} { #NPT操作
+        useGroupPressure      yes
+        useFlexibleCell       no
+
+        langevinPiston        on
+        langevinPistonTarget  100 ;#  in bar -> 1 atm
+        langevinPistonPeriod  100.0
+        langevinPistonDecay   50.0
+        langevinPistonTemp    $temperature
+    }
+    if {0} { #添加电场
+        eFieldOn          yes
+        eField            0.0 0.0 1
+    }
+
+    outputName        md_o
+    dcdfreq           1000
+    outputEnergies    1000
+    outputTiming      1000
+
+    if {1} {
+      minimize        100
+      reinitvels      $temperature
+    }
+
+    run               1000000
